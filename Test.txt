@@ -11,10 +11,3 @@ Listado de alumnos del curso de Estructuras de Datos
 9.
 10.
 
-
-fork
-git clone
-git add "archivo"
-git commit -m "actualizaicon"
-git push
-pull request
