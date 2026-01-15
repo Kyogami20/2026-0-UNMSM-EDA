@@ -11,5 +11,9 @@ Listado de alumnos del curso de Estructuras de Datos
 9. Salazar Zapata, Alvaro Matias
 10. Sotelo Atuncar, Diego Alejandro
 11. Ventura Enciso, Alan
-12. Villavicencio Paolo
+12. Villavicencio Paolo 
+13. Carrasco Farroñan Wilson Oswaldo
+14.
+15.
+16.
 13. Rojas Nazario,Nathan 
