@@ -22,11 +22,11 @@ Listado de alumnos del curso de Estructuras de Datos
 9.
 10.Galvez Garro, Jorge Luis Junior :D 
 10.
-11.
+11.Wilson Oswaldo Carraso Farroñan
 12.
 13.
 14.
 15. Ventura Enciso, Alan
 44. Caballero Chocano Martín
-11.
+11. 
 12. Gamarra Muñoz Juan Pablo
