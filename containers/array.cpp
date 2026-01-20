@@ -38,8 +38,9 @@ void CArray::resize(){
 }
 
 void DemoArray(){
-    CArray arr1(5);
-    for(auto i = 0; i < arr1.getSize(); ++i)
+    const int N = 5;
+    CArray arr1(N);
+    for(auto i = 0; i < N; ++i)
         arr1.push_back(i*10);
     cout << "First part finished" << endl;
     arr1[3] = 43;
