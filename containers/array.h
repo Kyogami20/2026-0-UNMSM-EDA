@@ -1,8 +1,9 @@
 #ifndef __ARRAY_H__
 #define __ARRAY_H__
+#include <iostream>
+#include <assert.h>
+using namespace std;
 #include <stddef.h>
-
-
 
 template <typename T>
 class CArray {
@@ -20,6 +21,7 @@ public:
   size_t getSize() const
   {   return m_last + 1;  };
   void resize(size_t delta = 10);
+
 };
 
 template <typename T>
@@ -37,9 +39,7 @@ typename CArray<T>::value_type &CArray<T>::operator[](size_t index) {
       cout << "Resizing from " << m_capacity << " to at least " << index + 5 << endl;
       resize(index - m_last + 5);
     }
-
     assert(index < m_capacity);
-
     if (index > m_last)
       m_last = index;
     return m_data[index];
@@ -61,6 +61,16 @@ void CArray<T>::resize(size_t delta) {
     delete[] m_data;
     m_data = new_data;
     m_capacity = new_capacity;
+}
+
+template <typename T>
+ostream &operator<<(ostream &os, CArray<T> &arr) {
+  os << "CArray: size = " << arr.getSize() << endl;
+  os << "[";
+  for (auto i = 0; i < arr.getSize(); ++i)
+    os << arr[i] << ",";
+  os << "]" << endl;
+  return os;
 }
 
 void DemoArray();

@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <iostream>
+#include <fstream>
 using namespace std;
 #include "array.h"
 
@@ -18,8 +19,10 @@ void DemoArray() {
   arr1[12] = 15;
 
   cout << "Ready to print" << endl;
-  for (auto i = 0; i < arr1.getSize(); ++i)
-    cout << "[" << i << "] = " << arr1[i] << endl;
-  // cout << arr1[50] << endl; // This will trigger an assertion failure
+  cout << arr1 << endl;
+
+  ofstream of("array.txt");
+  of << arr1;
+  of.close();
   cout << "DemoArray finished." << endl;
 }
