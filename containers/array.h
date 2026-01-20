@@ -1,10 +1,11 @@
 #ifndef __ARRAY_H__
 #define __ARRAY_H__
+#include <stddef.h>
 
 class CArray{
 private:
-    int  m_size;
-    int  m_data[100]; // Fixed size for simplicity;
+    int  m_size  = 0;
+    int  *m_data = nullptr; // Fixed size for simplicity;
 public:
     CArray(int size);
     ~CArray();
