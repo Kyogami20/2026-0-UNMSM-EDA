@@ -25,8 +25,7 @@ class CArray {
     {   return m_last + 1;  };
     void resize(size_t delta = 10);
     void sort( CompareFunc pComp );
-    void Sumar(int n);
-    void Mult (int n);
+    void Foreach(void (*pf)(T &, T), T p1);
 };
 
 template <typename T>
@@ -73,16 +72,13 @@ void CArray<T>::sort( CompareFunc pComp ){
     BurbujaRecursivo(m_data, m_last, pComp);
 }
 
-template <typename T>
-void CArray<T>::Sumar(int n){
-    for (auto i = 0; i < getSize(); ++i)
-      m_data[i] += n;
-}
+void Suma(int &elem, int p1){    elem += p1;     }
+void Mult(int &elem, int p1){    elem *= p1;     }
 
 template <typename T>
-void CArray<T>::Mult(int n){
+void CArray<T>::Foreach(void (*pf)(T &, T), T p1 ){
     for (auto i = 0; i < getSize(); ++i)
-      m_data[i] *= n;
+        pf(m_data[i], p1);
 }
 
 template <typename T>
