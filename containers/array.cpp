@@ -38,3 +38,6 @@ void DemoArray() {
     arr1.Foreach(&Mult, 5);
     cout << arr1 << endl;
 }
+
+void Suma(int &elem, int p1) { elem += p1; }
+void Mult(int &elem, int p1) { elem *= p1; }

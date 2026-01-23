@@ -4,7 +4,7 @@
 using namespace std;
 
 // Bubble  
-void BurbujaClasico(ContainerElemType* arr, ContainerRange n, CompFunc pComp) {
+/* void BurbujaClasico(ContainerElemType* arr, ContainerRange n, CompFunc pComp) {
     if (n <= 1)
         return;
     for (auto i = 0; i < n - 1; ++i) {
@@ -14,7 +14,7 @@ void BurbujaClasico(ContainerElemType* arr, ContainerRange n, CompFunc pComp) {
             }
         }
     }
-}
+} */
 template <typename T>
 void SortContainer(T *vect, ContainerRange n){
     // BurbujaRecursivo(vect, n, &::Mayor<T>); 
@@ -52,7 +52,7 @@ void DemoBurbuja(){
 // }
 
 
-void QuickSort( ContainerElemType* arr, 
+/* void QuickSort( ContainerElemType* arr, 
                 ContainerRange first, 
                 ContainerRange last, CompFunc pComp) {
     if (first < last) {
@@ -60,7 +60,7 @@ void QuickSort( ContainerElemType* arr,
         QuickSort(arr, first, pivot - 1, pComp);
         QuickSort(arr, pivot + 1, last, pComp);
     }
-}
+} */
 
 void DemoQuickSort() {
     // cout << "DemoQuickSort \n";
@@ -80,7 +80,7 @@ void DemoQuickSort() {
 }
 
 // Función para mezclar dos subarreglos ordenados de arr[].
-void Merge(ContainerElemType* arr, const ContainerRange left, 
+/* void Merge(ContainerElemType* arr, const ContainerRange left, 
                                    const ContainerRange mid, 
                                    const ContainerRange right, 
                                    CompFunc pComp) {
@@ -127,7 +127,7 @@ void Merge(ContainerElemType* arr, const ContainerRange left,
 
     delete[] leftArray;
     delete[] rightArray;
-}
+} */
 
 // left es para el índice izquierdo y right es para el índice derecho del
 // sub-array de arr a ordenar
