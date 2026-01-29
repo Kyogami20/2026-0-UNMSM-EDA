@@ -58,7 +58,7 @@ class CArray {
 
     template <typename ObjFunc, typename ...Args>
     void Foreach(ObjFunc of, Args... args){
-      for (auto i = 0; i < getSize(); ++i)
+      for (size_t i = 0; i < getSize(); ++i)
           of(m_data[i], args...);
     }
 };
@@ -82,7 +82,7 @@ typename CArray<Traits>::value_type &CArray<Traits>::operator[](size_t index) {
     assert(index < m_capacity);
     if (index >= m_last) {
         for (size_t i = m_last; i <= index; ++i) {
-            m_data[i] = T();  
+            m_data[i] = value_type{};  
         }
         m_last = index + 1;
     }
@@ -111,10 +111,6 @@ template <typename Traits>
 void CArray<Traits>::sort( CompareFunc pComp ){
     BurbujaRecursivo(m_data, m_last, pComp);
 }
-
-
-void Suma(int &elem, int p1);
-void Mult(int &elem, int p1);
 
 template <typename Traits>
 ostream &operator<<(ostream &os, CArray<Traits> &arr) {
