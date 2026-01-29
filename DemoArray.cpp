@@ -45,7 +45,7 @@ void DemoArray() {
 
     cout << "Antes del Foreach externo, getSize()=" << arr1.getSize() << endl;
     Foreach(arr1, &IncBasico<T1>);
-    cout << "Terminó" << endl;
+    cout << "Termino" << endl;
 
     using T2 = string;
     CArray< Trait1<T2> > arr2(N);
