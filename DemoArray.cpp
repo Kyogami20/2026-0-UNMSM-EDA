@@ -43,6 +43,10 @@ void DemoArray() {
     arr1.Foreach(&Mult<T1>, 3);
     cout << arr1 << endl;
 
+    cout << "Antes del Foreach externo, getSize()=" << arr1.getSize() << endl;
+    Foreach(arr1, &IncBasico<T1>);
+    cout << "Terminó" << endl;
+
     using T2 = string;
     CArray< Trait1<T2> > arr2(N);
     arr2[2] = "UNMSM";

@@ -10,6 +10,9 @@ auto Test(Q elem, Args ...args){
 }
 
 template <typename Q>
+void IncBasico(Q &elem){    elem += 1;     }
+
+template <typename Q>
 void Suma(Q &elem, Q p1){    elem += p1;     }
 
 template <typename Q>

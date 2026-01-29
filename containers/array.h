@@ -14,20 +14,27 @@ struct Trait1
 };
 
 template <typename Container>
-class ArrayIterator
+class ArrayForwardIterator
 { private:
     using value_type  = typename Container::value_type;
 
     Container  *m_pContainer = nullptr;
     value_type *m_data       = nullptr;
     size_t      m_pos        = -1;
-    
   public:
-    ArrayIterator(Container *pContainer) 
-         : m_pContainer(pContainer) {}
-    virtual ~ArrayIterator(){};
-    ArrayIterator &operator++();
-    bool operator!=(ArrayIterator<Container> &another){
+    ArrayForwardIterator(Container *pContainer, size_t pos=0) 
+         : m_pContainer(pContainer) {
+          m_data = m_pContainer->m_data;
+          m_pos  = 0;
+         }
+    ArrayForwardIterator(ArrayForwardIterator<Container> &another)
+         :  m_pContainer(another.m_pContainer),
+            m_data (another.m_data),
+            m_pos  (another.m_pos)
+    {}
+    virtual ~ArrayForwardIterator(){};
+    ArrayForwardIterator<Container> &operator++();
+    bool operator!=(ArrayForwardIterator<Container> &another){
         return m_pContainer != another.m_pContainer ||
                m_pos        != another.m_pos;         
     }
@@ -36,11 +43,19 @@ class ArrayIterator
     }
 };
 
+template <typename Container>
+ArrayForwardIterator<Container>& ArrayForwardIterator<Container>::operator++(){
+    if( m_pos < m_pContainer->getSize() )
+        ++m_pos;
+    return *this;
+}
+
 template <typename Traits>
 class CArray {
     using value_type  = typename Traits::T;
     using CompareFunc = typename Traits::CompareFunc;
-
+    using forward_iterator = ArrayForwardIterator< CArray<Traits> >;
+    friend forward_iterator;
   private:
     size_t m_capacity = 0;
     size_t m_last = 0;
@@ -55,6 +70,11 @@ class CArray {
     size_t getSize() const {   return m_last;  };
     void resize(size_t delta = 10);
     void sort( CompareFunc pComp );
+
+    forward_iterator begin()
+    { return forward_iterator(this);  }
+    forward_iterator end()
+    { return forward_iterator(this, getSize());  }
 
     template <typename ObjFunc, typename ...Args>
     void Foreach(ObjFunc of, Args... args){

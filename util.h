@@ -2,6 +2,7 @@
 #define __UTIL_H__
 
 #include "general/types.h"
+#include "foreach.h"
 
 template <typename T>
 void intercambiar(T &a, T &b){
