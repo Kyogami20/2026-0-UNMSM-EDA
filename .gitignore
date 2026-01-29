@@ -3,3 +3,4 @@ Info.plist
 *.o
 *.txt
 *.exe
+/.vscode
