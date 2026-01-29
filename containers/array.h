@@ -42,7 +42,8 @@ class CArray {
     using CompareFunc = typename Traits::CompareFunc;
 
   private:
-    size_t m_capacity = 0, m_last = 0;
+    size_t m_capacity = 0;
+    size_t m_last = 0;
     value_type *m_data = nullptr;
 
   public:
@@ -51,8 +52,7 @@ class CArray {
 
     void push_back(value_type value);
     value_type &operator[](size_t index);
-    size_t getSize() const
-    {   return m_last + 1;  };
+    size_t getSize() const {   return m_last;  };
     void resize(size_t delta = 10);
     void sort( CompareFunc pComp );
 
@@ -66,6 +66,7 @@ class CArray {
 template <typename Traits>
 CArray<Traits>::CArray(size_t size) {
   m_capacity = size;
+  m_last = 0;
   m_data = new value_type[size];
 }
 template <typename Traits>
@@ -79,8 +80,12 @@ typename CArray<Traits>::value_type &CArray<Traits>::operator[](size_t index) {
       resize(index - m_last + 5);
     }
     assert(index < m_capacity);
-    if (index > m_last)
-      m_last = index;
+    if (index >= m_last) {
+        for (size_t i = m_last; i <= index; ++i) {
+            m_data[i] = T();  
+        }
+        m_last = index + 1;
+    }
     return m_data[index];
 }
 
@@ -95,7 +100,7 @@ template <typename Traits>
 void CArray<Traits>::resize(size_t delta) {
     size_t new_capacity = m_capacity + delta;
     value_type *new_data = new value_type[new_capacity];
-    for (auto i = 0; i < m_capacity; ++i)
+    for (size_t i = 0; i < m_last; ++i)
       new_data[i] = m_data[i];
     delete[] m_data;
     m_data = new_data;
@@ -107,11 +112,15 @@ void CArray<Traits>::sort( CompareFunc pComp ){
     BurbujaRecursivo(m_data, m_last, pComp);
 }
 
+
+void Suma(int &elem, int p1);
+void Mult(int &elem, int p1);
+
 template <typename Traits>
 ostream &operator<<(ostream &os, CArray<Traits> &arr) {
   os << "CArray: size = " << arr.getSize() << endl;
   os << "[";
-  for (auto i = 0; i < arr.getSize(); ++i)
+  for (size_t i = 0; i < arr.getSize(); ++i)
     os << arr[i] << ",";
   os << "]" << endl;
   return os;
