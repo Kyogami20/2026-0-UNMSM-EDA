@@ -3,11 +3,6 @@
 #include "../util.h"
 #include "../compareFunc.h"
 
-// void BurbujaClasico(ContainerElemType* arr,
-                    // ContainerRange n, CompFunc pComp);
-
-
-// Bubble
 template <typename T>
 void BurbujaRecursivo(T arr[], ContainerRange n, 
                       bool (*pComp)(const T &, const T &) ) {
@@ -20,16 +15,5 @@ void BurbujaRecursivo(T arr[], ContainerRange n,
 }
 
 void DemoBurbuja();
-
-// ContainerRange  particionar(ContainerElemType* arr, ContainerRange first, ContainerRange last, CompFunc pComp);
-// void QuickSort  (ContainerElemType* arr, ContainerRange first, ContainerRange last, CompFunc pComp);
-// void DemoQuickSort();
-
-// void Merge(ContainerElemType* arr, const ContainerRange left, const ContainerRange mid, const ContainerRange right, CompFunc pComp); 
-// void MergeSort(ContainerElemType* arr, const ContainerRange begin, const ContainerRange end, CompFunc pComp);
-// void DemoMergeSort();
-
-void DemoSorting();
-void DemoTemplates();
 
 #endif // __SORTING_H__
