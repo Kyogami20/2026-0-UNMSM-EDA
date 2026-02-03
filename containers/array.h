@@ -111,11 +111,11 @@ class CArray {
     auto FirstThat(ObjFunc of, Args... args){
         return ::FirstThat(*this, of, args...);
     }
-    friend ostream &operator<<(ostream &os, CArray<Traits> &arr){
-        os << "CArray: size = " << arr.getSize() << endl;
+    friend ostream &operator<<(ostream &os, CArray<Traits> &container){
+        os << "CArray: size = " << container.getSize() << endl;
         os << "[";
-        for (auto i = 0; i < arr.getSize(); ++i)
-          os << "(" << arr.m_data[i].GetValue() << ":" << arr.m_data[i].GetRef() << "),";
+        for (auto i = 0; i < container.getSize(); ++i)
+          os << "(" << container.m_data[i].GetValue() << ":" << container.m_data[i].GetRef() << "),";
         os << "]" << endl;
         return os;
     }
