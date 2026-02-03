@@ -5,6 +5,7 @@
 using namespace std;
 #include <stddef.h>
 #include "../algorithms/sorting.h"
+#include "GeneralIterator.h"
 
 template <typename _T>
 struct Trait1
@@ -14,61 +15,80 @@ struct Trait1
 };
 
 template <typename Container>
-class ArrayForwardIterator
-{ private:
-    using value_type  = typename Container::value_type;
-
-    Container  *m_pContainer = nullptr;
-    value_type *m_data       = nullptr;
-    size_t      m_pos        = -1;
+class ArrayForwardIterator : public GeneralIterator<Container>
+{ 
+  using Parent = GeneralIterator<Container>;
   public:
-    ArrayForwardIterator(Container *pContainer, size_t pos=0) 
-         : m_pContainer(pContainer) {
-          m_data = m_pContainer->m_data;
-          m_pos  = 0;
-         }
-    ArrayForwardIterator(ArrayForwardIterator<Container> &another)
-         :  m_pContainer(another.m_pContainer),
-            m_data (another.m_data),
-            m_pos  (another.m_pos)
-    {}
-    virtual ~ArrayForwardIterator(){};
-    ArrayForwardIterator<Container> &operator++();
-    bool operator!=(ArrayForwardIterator<Container> &another){
-        return m_pContainer != another.m_pContainer ||
-               m_pos        != another.m_pos;         
-    }
-    value_type &operator*(){
-      return m_data[m_pos];
+    ArrayForwardIterator(Container *pContainer, Size pos=0)       : Parent(pContainer, pos){}
+    ArrayForwardIterator(ArrayForwardIterator<Container> &another):  Parent(another){}
+
+    ArrayForwardIterator<Container> &operator++(){
+        if( Parent::m_pos < Parent::m_pContainer->getSize() )
+            ++Parent::m_pos;
+        return *this;
     }
 };
 
 template <typename Container>
-ArrayForwardIterator<Container>& ArrayForwardIterator<Container>::operator++(){
-    if( m_pos < m_pContainer->getSize() )
-        ++m_pos;
-    return *this;
-}
+class ArrayBackwardIterator : public GeneralIterator<Container>
+{ 
+  using Parent = GeneralIterator<Container>;
+  public:
+    ArrayBackwardIterator(Container *pContainer, Size pos=0)          : Parent(pContainer, pos){}
+    ArrayBackwardIterator(ArrayBackwardIterator<Container> &another)  :  Parent(another){}
+
+    ArrayBackwardIterator<Container> &operator++(){
+        if( Parent::m_pos > -1 )
+            --Parent::m_pos;
+        return *this;
+    }
+};
 
 template <typename Traits>
 class CArray {
     using value_type  = typename Traits::T;
     using CompareFunc = typename Traits::CompareFunc;
-    using forward_iterator = ArrayForwardIterator< CArray<Traits> >;
+    using  forward_iterator  = ArrayForwardIterator < CArray<Traits> >;
     friend forward_iterator;
+    using  backward_iterator = ArrayBackwardIterator< CArray<Traits> >;
+    friend backward_iterator;
+    friend GeneralIterator< CArray<Traits> >;
+
+    struct Node{
+        value_type m_value;
+        ref_type   m_ref;
+
+        Node(){}
+        Node( value_type _value, ref_type _ref = -1)
+            : m_value(_value), m_ref(_ref){   }
+        value_type  GetValue   () const { return m_value; }
+        value_type &GetValueRef() { return m_value; }
+
+        ref_type    GetRef     () const { return m_ref;   }
+        ref_type   &GetRefRef  () { return m_ref;   }
+        Node &operator=(const Node &another){
+          m_value = another.GetValue();
+          m_ref   = another.GetRef();
+          return *this;
+        }
+        bool operator==(const Node &another)
+        { return m_value == another.GetValue();   }
+        bool operator<(const Node &another)
+        { return m_value < another.GetValue();   }
+    };
   private:
-    size_t m_capacity = 0;
-    size_t m_last = 0;
-    value_type *m_data = nullptr;
+    Size m_capacity = 0, m_last = 0;
+    Node *m_data = nullptr;
 
   public:
-    CArray(size_t size);
+    CArray(Size size);
     virtual ~CArray();
 
-    void push_back(value_type value);
-    value_type &operator[](size_t index);
-    size_t getSize() const {   return m_last;  };
-    void resize(size_t delta = 10);
+    void push_back(value_type value, ref_type ref);
+    value_type &operator[](Size index);
+    Size getSize() const
+    {   return m_last + 1;  };
+    void resize(Size delta = 10);
     void sort( CompareFunc pComp );
 
     forward_iterator begin()
@@ -76,51 +96,57 @@ class CArray {
     forward_iterator end()
     { return forward_iterator(this, getSize());  }
 
+    backward_iterator rbegin()
+    { return backward_iterator(this, getSize()-1);  }
+    backward_iterator rend()
+    { return backward_iterator(this, -1);  }
+
     template <typename ObjFunc, typename ...Args>
     void Foreach(ObjFunc of, Args... args){
-      for (size_t i = 0; i < getSize(); ++i)
-          of(m_data[i], args...);
+        ::Foreach(*this, of, args...);
+        // for (auto i = 0; i < getSize(); ++i)
+        //     of(m_data[i], args...);
     }
+    template <typename ObjFunc, typename ...Args>
+    auto FirstThat(ObjFunc of, Args... args){
+        return ::FirstThat(*this, of, args...);
+    }
+    friend ostream &operator<<(ostream &os, CArray<Traits> &arr);
 };
 
 template <typename Traits>
-CArray<Traits>::CArray(size_t size) {
+CArray<Traits>::CArray(Size size) {
   m_capacity = size;
-  m_last = 0;
-  m_data = new value_type[size];
+  m_data = new Node[size];
 }
 template <typename Traits>
 CArray<Traits>::~CArray() { delete[] m_data; }
 
 template <typename Traits>
-typename CArray<Traits>::value_type &CArray<Traits>::operator[](size_t index) {
+typename CArray<Traits>::value_type &CArray<Traits>::operator[](Size index) {
     // cout << "XResizing from " << m_capacity << " to at least " << index + 5 << endl;
     if (index > m_capacity) {
       cout << "Resizing from " << m_capacity << " to at least " << index + 5 << endl;
       resize(index - m_last + 5);
     }
     assert(index < m_capacity);
-    if (index >= m_last) {
-        for (size_t i = m_last; i <= index; ++i) {
-            m_data[i] = value_type{};  
-        }
-        m_last = index + 1;
-    }
-    return m_data[index];
+    if (index > m_last)
+      m_last = index;
+    return m_data[index].GetValueRef();
 }
 
 template <typename Traits>
-void CArray<Traits>::push_back(value_type value) {
+void CArray<Traits>::push_back(value_type value, ref_type ref) {
     if (m_last >= m_capacity)
       resize();
-    m_data[m_last++] = value;
+    m_data[m_last++] = Node(value, ref);
 }
 
 template <typename Traits>
-void CArray<Traits>::resize(size_t delta) {
-    size_t new_capacity = m_capacity + delta;
-    value_type *new_data = new value_type[new_capacity];
-    for (size_t i = 0; i < m_last; ++i)
+void CArray<Traits>::resize(Size delta) {
+    Size new_capacity = m_capacity + delta;
+    Node *new_data = new Node[new_capacity];
+    for (auto i = 0; i < m_capacity; ++i)
       new_data[i] = m_data[i];
     delete[] m_data;
     m_data = new_data;
@@ -136,8 +162,8 @@ template <typename Traits>
 ostream &operator<<(ostream &os, CArray<Traits> &arr) {
   os << "CArray: size = " << arr.getSize() << endl;
   os << "[";
-  for (size_t i = 0; i < arr.getSize(); ++i)
-    os << arr[i] << ",";
+  for (auto i = 0; i < arr.getSize(); ++i)
+    os << "(" << arr.m_data[i].GetValue() << ":" << arr.m_data[i].GetRef() << "),";
   os << "]" << endl;
   return os;
 }
