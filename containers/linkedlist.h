@@ -1,5 +1,7 @@
 #ifndef __LINKEDLIST_H__
 #define __LINKEDLIST_H__
+
+#include <ostream>
 #include <iostream>
 #include "../general/types.h"
 #include "../util.h"
@@ -23,37 +25,37 @@ struct DescendingTrait :
 
 template <typename Traits>
 class NodeLinkedList{
-
     using  value_type  = typename Traits::value_type;
-    using  Node        = NodeLinkedList<Traits>;
-private:
-    value_type m_data;
-    ref_type   m_ref;
-    Node *m_pNext = nullptr;
 
-public:
-    NodeLinkedList(){}
-    NodeLinkedList( value_type _value, ref_type _ref = -1)
-        : m_data(_value), m_ref(_ref){   }
-    value_type  GetValue   () const { return m_data; }
-    value_type &GetValueRef() { return m_data; }
+    private:
+        value_type m_data;
+        ref_type   m_ref;
+        NodeLinkedList *m_pNext = nullptr;
 
-    ref_type    GetRef     () const { return m_ref;   }
-    ref_type   &GetRefRef  () { return m_ref;   }
+    public:
+        NodeLinkedList(){}
+        NodeLinkedList( value_type _value, ref_type _ref = -1)
+            : m_data(_value), m_ref(_ref){   }
+        value_type  GetValue   () const { return m_data; }
+        value_type &GetValueRef() { return m_data; }
 
-    Node      * GetNext     () const { return m_pNext;   }
-    Node      *&GetNextRef  () { return m_pNext;   }
+        ref_type    GetRef     () const { return m_ref;   }
+        ref_type   &GetRefRef  () { return m_ref;   }
 
-    Node &operator=(const Node &another){
-        m_data = another.GetValue();
-        m_ref   = another.GetRef();
-        return *this;
-    }
-    bool operator==(const Node &another) const
-    { return m_data == another.GetValue();   }
-    bool operator<(const Node &another) const
-    { return m_data < another.GetValue();   }
+        NodeLinkedList   * GetNext     () const { return m_pNext;   }
+        NodeLinkedList   *&GetNextRef  () { return m_pNext;   }
+
+        NodeLinkedList &operator=(const NodeLinkedList &another){
+            m_data = another.GetValue();
+            m_ref   = another.GetRef();
+            return *this;
+        }
+        bool operator==(const NodeLinkedList &another) const
+        { return m_data == another.GetValue();   }
+        bool operator<(const NodeLinkedList &another) const
+        { return m_data < another.GetValue();   }
 };
+
 
 template <typename Traits>
 class CLinkedList {
@@ -61,44 +63,51 @@ class CLinkedList {
     // using  forward_iterator  = LinkedListForwardIterator < CLinkedList<Traits> >;
     // friend forward_iterator;
     // friend GeneralIterator< CLinkedList<Traits> >;
-    using  Node = NodeLinkedList<Traits>;
+    using  NodeLinkedList = NodeLinkedList<Traits>;
 
-    Node *m_pRoot = nullptr;
-    Node *m_pLast = nullptr;
+    NodeLinkedList *m_pRoot = nullptr;
+    NodeLinkedList *m_pLast = nullptr;
     size_t m_nElements = 0;
-public:
-    CLinkedList(){}
+    
+    public:
+        CLinkedList(){}
 
-    void push_back(value_type &val, ref_type ref);
-    void Insert(const value_type &val, ref_type ref);
-    size_t getSize(){ return m_nElements;  }
-private:
-    void InternalInsert(Node *&rParent, const value_type &val, ref_type ref);
+        void push_back(value_type &val, ref_type ref);
+        void Insert(const value_type &val, ref_type ref);
+        NodeLinkedList* getRoot();
+        size_t getSize(){ return m_nElements;  }
 
-    friend ostream &operator<<(ostream &os, CLinkedList<Traits> &container){
-        os << "CLinkedList: size = " << container.getSize() << endl;
-        os << "[";
-        for (auto i = 0; i < container.getSize(); ++i){
-            // os << "(" << arr.m_data[i].GetValue() << ":" << arr.m_data[i].GetRef() << "),";
+    private:
+        void InternalInsert(NodeLinkedList *&rParent, const value_type &val, ref_type ref);
+
+        friend ostream &operator<<(ostream &os, CLinkedList<Traits> &container){
+            os << "CLinkedList: size = " << container.getSize() << endl;
+            os << "[";
+
+            while (container.getRoot()){
+
+            }
+            
+            /* for (size_t i = 0; i < container.getSize(); ++i){
+                os << "(" << container.m_data[i].GetValue() << ":" << container.m_data[i].GetRef() << "),"; 
+            } */
+            os << "]" << endl;
+            return os;
         }
-        os << "]" << endl;
-        return os;
-    }
 };
 
 template <typename Traits>
 void CLinkedList<Traits>::push_back(value_type &val, ref_type ref){
-    Node *pNewNode = new Node(val, ref);
-    if( !m_pRoot )
-        m_pRoot = pNewNode;
+    NodeLinkedList *pNewNode = new NodeLinkedList(val, ref);
+    if( !m_pRoot ) m_pRoot = pNewNode;
     m_pLast = pNewNode;
     ++m_nElements;
 }
 
 template <typename Traits>
-void CLinkedList<Traits>::InternalInsert(Node *&rParent, const value_type &val, ref_type ref){
-    if( !rParent || rParent->m_data > val ){
-        Node *pNew = new Node(val, ref, rParent);
+void CLinkedList<Traits>::InternalInsert(NodeLinkedList *&rParent, const value_type &val, ref_type ref){
+    if( !rParent || rParent->GetValueRef() > val ){
+        NodeLinkedList *pNew = new NodeLinkedList(val, ref);
         rParent = pNew;
         ++m_nElements;
         return;
