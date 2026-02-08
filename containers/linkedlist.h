@@ -136,6 +136,9 @@ void CLinkedList<Traits>::InternalInsert(NodeLinkedList *&rParent, const value_t
         pNew->GetNextRef() = rParent;
         rParent = pNew;
         ++m_nElements;
+        
+        if ( !m_pLast || !pNew->GetNext()) m_pLast = pNew;
+        
         return;
     }
     InternalInsert(rParent->GetNextRef(), val, ref);

@@ -3,16 +3,38 @@
 
 #include "../containers/GeneralIterator.h"
 #include "../general/types.h"
+#include "general/types.h"
+
+//Iterators para CArray
+template <typename Container>
+class ArrayIterator :  public GeneralIterator<Container> {
+
+    protected:
+    using Parent = GeneralIterator<Container>;
+    using value_type = typename Parent::value_type;
+
+    Size m_pos;
+
+    public:
+    ArrayIterator(Container *pContainer, Size pos=0) : Parent(pContainer), m_pos(pos){}
+
+    bool operator!=(const ArrayIterator<Container> &another) {
+        return this->m_pContainer != another.m_pContainer || m_pos != another.m_pos;
+    }
+
+    value_type &operator*() override { return Parent::m_data[m_pos].GetValueRef(); }
+};
+
 
 template <typename Container>
-class ArrayForwardIterator : public GeneralIterator<Container>
-{ 
-  using Parent = GeneralIterator<Container>;
-  public:
-    ArrayForwardIterator(Container *pContainer, Size pos=0)       : Parent(pContainer, pos){}
-    ArrayForwardIterator(ArrayForwardIterator<Container> &another):  Parent(another){}
+class ArrayForwardIterator : public ArrayIterator<Container>{
 
-    ArrayForwardIterator<Container> &operator++(){
+    using Parent = ArrayIterator<Container>;
+
+    public:
+    ArrayForwardIterator(Container *pContainer, Size pos=0) : Parent(pContainer, pos){}
+
+    Parent &operator++(){
         if( Parent::m_pos < Parent::m_pContainer->getSize() )
             ++Parent::m_pos;
         return *this;
@@ -20,18 +42,20 @@ class ArrayForwardIterator : public GeneralIterator<Container>
 };
 
 template <typename Container>
-class ArrayBackwardIterator :  public GeneralIterator<Container>
+class ArrayBackwardIterator :  public ArrayIterator<Container>
 { 
-  using Parent = GeneralIterator<Container>;
+  using Parent = ArrayIterator<Container>;
+
   public:
-    ArrayBackwardIterator(Container *pContainer, Size pos=0)          : Parent(pContainer, pos){}
-    ArrayBackwardIterator(ArrayBackwardIterator<Container> &another)  :  Parent(another){}
+    ArrayBackwardIterator(Container *pContainer, Size pos=0) : Parent(pContainer, pos){}
 
     ArrayBackwardIterator<Container> &operator++(){
         if( Parent::m_pos > -1 )
             --Parent::m_pos;
         return *this;
     }
-};
+}; 
+
+//Iterators for CLinkedList
 
 #endif //ITERATOS_H_

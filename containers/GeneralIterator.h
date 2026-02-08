@@ -3,34 +3,24 @@
 #include "util.h"
 
 template <typename Container>
-struct GeneralIterator
-{ public:
-    using value_type  = typename Container::value_type;
-    using Node        = typename Container::Node;
-
+class GeneralIterator{
+  public:
+  using value_type  = typename Container::value_type;
+  using Node        = typename Container::Node;
+  
+  protected:
     Container  *m_pContainer = nullptr;
     Node       *m_data       = nullptr;
-    Size        m_pos        = -1;
+
   public:
-    GeneralIterator(Container *pContainer, Size pos=0) 
-         : m_pContainer(pContainer) {
-           m_data = m_pContainer->m_data;
-           m_pos = pos;
-         }
+    GeneralIterator(Container *pContainer) 
+         : m_pContainer(pContainer), m_data(pContainer->m_data) {}
+
     GeneralIterator(GeneralIterator<Container> &another)
-         :  m_pContainer(another.m_pContainer),
-            m_data (another.m_data),
-            m_pos  (another.m_pos)
-    {}
-    virtual ~GeneralIterator(){};
+         :  m_pContainer(another.m_pContainer), m_data (another.m_data){}
     
-    bool operator!=(const GeneralIterator<Container> &another){
-        return m_pContainer != another.m_pContainer ||
-               m_pos        != another.m_pos;         
-    }
-    value_type &operator*(){
-      return m_data[m_pos].GetValueRef();
-    }
+    virtual ~GeneralIterator() = default;
+    virtual value_type &operator*() = 0;
 };
 
 #endif // __GENERAL_ITERATOR_H__
