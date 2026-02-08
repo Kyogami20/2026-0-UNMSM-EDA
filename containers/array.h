@@ -1,11 +1,15 @@
 #ifndef __ARRAY_H__
 #define __ARRAY_H__
+
 #include <iostream>
 #include <assert.h>
-using namespace std;
 #include <stddef.h>
+
 #include "../algorithms/sorting.h"
 #include "GeneralIterator.h"
+#include "../general/Iterators.h"
+
+using namespace std;
 
 template <typename _T>
 struct Trait1
@@ -13,40 +17,12 @@ struct Trait1
     using T = _T;
 };
 
-template <typename Container>
-class ArrayForwardIterator : public GeneralIterator<Container>
-{ 
-  using Parent = GeneralIterator<Container>;
-  public:
-    ArrayForwardIterator(Container *pContainer, Size pos=0)       : Parent(pContainer, pos){}
-    ArrayForwardIterator(ArrayForwardIterator<Container> &another):  Parent(another){}
 
-    ArrayForwardIterator<Container> &operator++(){
-        if( Parent::m_pos < Parent::m_pContainer->getSize() )
-            ++Parent::m_pos;
-        return *this;
-    }
-};
-
-template <typename Container>
-class ArrayBackwardIterator :  public GeneralIterator<Container>
-{ 
-  using Parent = GeneralIterator<Container>;
-  public:
-    ArrayBackwardIterator(Container *pContainer, Size pos=0)          : Parent(pContainer, pos){}
-    ArrayBackwardIterator(ArrayBackwardIterator<Container> &another)  :  Parent(another){}
-
-    ArrayBackwardIterator<Container> &operator++(){
-        if( Parent::m_pos > -1 )
-            --Parent::m_pos;
-        return *this;
-    }
-};
 
 template <typename Traits>
 class CArray {
     using value_type  = typename Traits::T;
-    using  forward_iterator  = ArrayForwardIterator < CArray<Traits> >;
+    using  forward_iterator  = ArrayForwardIterator< CArray<Traits> >;
     friend forward_iterator;
     using  backward_iterator = ArrayBackwardIterator< CArray<Traits> >;
     friend backward_iterator;
@@ -107,10 +83,12 @@ class CArray {
         // for (auto i = 0; i < getSize(); ++i)
         //     of(m_data[i], args...);
     }
+    
     template <typename ObjFunc, typename ...Args>
     auto FirstThat(ObjFunc of, Args... args){
         return ::FirstThat(*this, of, args...);
     }
+
     friend ostream &operator<<(ostream &os, CArray<Traits> &container){
         os << "CArray: size = " << container.getSize() << endl;
         os << "[";

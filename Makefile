@@ -4,8 +4,7 @@ LDFLAGS = -pthread
 
 TARGET = main
 SRCS = main.cpp util.cpp pointers.cpp \
-       DemoArray.cpp DemoLists.cpp \
-	   algorithms/sorting.cpp
+       DemoArray.cpp DemoLists.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # ---- Compatibilidad Windows / Unix ----
