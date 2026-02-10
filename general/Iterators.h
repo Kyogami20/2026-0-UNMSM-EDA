@@ -58,4 +58,35 @@ class ArrayBackwardIterator :  public ArrayIterator<Container>
 
 //Iterators for CLinkedList
 
+template <typename Container>
+class LinkedListIterator : public GeneralIterator<Container> {
+
+    protected:
+    using Parent = GeneralIterator<Container>;
+    using value_type = typename Parent::value_type;
+
+    public:
+    LinkedListIterator(Container *pContainer) : Parent(pContainer){}
+
+    bool operator!=(const LinkedListIterator<Container> &another) {
+        return this->m_pContainer != another.m_pContainer || Parent::m_data != another.m_data;
+    }
+
+    value_type &operator*() override { return Parent::m_data->GetValueRef(); }
+};
+
+template <typename Container>
+class LinkedListForwardIterator : public LinkedListIterator<Container>{
+
+    using Parent = LinkedListIterator<Container>;
+
+    public:
+    LinkedListForwardIterator(Container *pContainer) : Parent(pContainer){}
+
+    Parent &operator++(){
+        if( Parent::m_data != nullptr )Parent::m_data = Parent::m_data->GetNext();
+        return *this;
+    }
+};
+
 #endif //ITERATOS_H_
