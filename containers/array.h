@@ -27,6 +27,7 @@ class CArray {
     using  backward_iterator = ArrayBackwardIterator< CArray<Traits> >;
     friend backward_iterator;
     friend GeneralIterator< CArray<Traits> >;
+    friend ArrayIterator< CArray<Traits> >;
 
     struct Node{
         value_type m_value;
@@ -50,8 +51,10 @@ class CArray {
         bool operator<(const Node &another) const
         { return m_value < another.GetValue();   }
     };
+
     //using  CompareFunc = Traits::CompareFunc
     using  CompareFunc = bool (*)(const Node &, const Node &);
+
   private:
     Size m_capacity = 0, m_last = 0;
     Node *m_data = nullptr;
@@ -80,8 +83,6 @@ class CArray {
     template <typename ObjFunc, typename ...Args>
     void Foreach(ObjFunc of, Args... args){
         ::Foreach(*this, of, args...);
-        // for (auto i = 0; i < getSize(); ++i)
-        //     of(m_data[i], args...);
     }
     
     template <typename ObjFunc, typename ...Args>

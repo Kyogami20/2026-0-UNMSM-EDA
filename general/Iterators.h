@@ -16,7 +16,7 @@ class ArrayIterator :  public GeneralIterator<Container> {
     Size m_pos;
 
     public:
-    ArrayIterator(Container *pContainer, Size pos=0) : Parent(pContainer), m_pos(pos){}
+    ArrayIterator(Container *pContainer, Size pos=0) : Parent(pContainer, pContainer->m_data), m_pos(pos){}
 
     bool operator!=(const ArrayIterator<Container> &another) {
         return this->m_pContainer != another.m_pContainer || m_pos != another.m_pos;
@@ -64,9 +64,10 @@ class LinkedListIterator : public GeneralIterator<Container> {
     protected:
     using Parent = GeneralIterator<Container>;
     using value_type = typename Parent::value_type;
+    using NodeLinkedList = typename Container::NodeLinkedList;
 
     public:
-    LinkedListIterator(Container *pContainer) : Parent(pContainer){}
+    LinkedListIterator(Container *pContainer, NodeLinkedList *data) : Parent(pContainer, data){}
 
     bool operator!=(const LinkedListIterator<Container> &another) {
         return this->m_pContainer != another.m_pContainer || Parent::m_data != another.m_data;
@@ -79,12 +80,13 @@ template <typename Container>
 class LinkedListForwardIterator : public LinkedListIterator<Container>{
 
     using Parent = LinkedListIterator<Container>;
+    using NodeLinkedList = typename Container::NodeLinkedList;
 
     public:
-    LinkedListForwardIterator(Container *pContainer) : Parent(pContainer){}
+    LinkedListForwardIterator(Container *pContainer, NodeLinkedList *data) : Parent(pContainer, data){}
 
     Parent &operator++(){
-        if( Parent::m_data != nullptr )Parent::m_data = Parent::m_data->GetNext();
+        if( Parent::m_data != nullptr ) Parent::m_data = Parent::m_data->GetNext();
         return *this;
     }
 };

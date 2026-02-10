@@ -14,7 +14,10 @@ class GeneralIterator{
 
   public:
     GeneralIterator(Container *pContainer) 
-         : m_pContainer(pContainer), m_data(pContainer->m_data) {}
+         : m_pContainer(pContainer), m_data(nullptr) {}
+
+    GeneralIterator(Container *pContainer, Node *data) 
+         : m_pContainer(pContainer), m_data(data) {}
 
     GeneralIterator(GeneralIterator<Container> &another)
          :  m_pContainer(another.m_pContainer), m_data (another.m_data){}
