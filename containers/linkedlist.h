@@ -7,8 +7,8 @@
 #include <mutex>
 
 #include "../general/types.h"
-#include "../util.h"
-#include "general/Iterators.h"
+#include "../Others/util.h"
+#include "../Iterators/Iterators.h"
 
 using namespace std;
 

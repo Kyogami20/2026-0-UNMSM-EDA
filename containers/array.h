@@ -7,7 +7,7 @@
 
 #include "../algorithms/sorting.h"
 #include "GeneralIterator.h"
-#include "../general/Iterators.h"
+#include "../Iterators/Iterators.h"
 
 using namespace std;
 

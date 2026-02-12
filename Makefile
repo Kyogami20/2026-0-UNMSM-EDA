@@ -3,8 +3,8 @@ CXXFLAGS = -std=c++17 -Wall -g -pthread -I.
 LDFLAGS = -pthread
 
 TARGET = main
-SRCS = main.cpp util.cpp pointers.cpp \
-       DemoArray.cpp DemoLists.cpp
+SRCS = main.cpp Others/util.cpp Others/pointers.cpp \
+       Demos/DemoArray.cpp Demos/DemoLists.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # ---- Compatibilidad Windows / Unix ----

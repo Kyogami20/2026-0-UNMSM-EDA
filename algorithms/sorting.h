@@ -1,7 +1,7 @@
 #ifndef __SORTING_H__
 #define __SORTING_H__
-#include "../util.h"
-#include "../compareFunc.h"
+#include "../Others/util.h"
+#include "../general/compareFunc.h"
 
 template <typename T>
 void BurbujaRecursivo(T arr[], ContainerRange n, 

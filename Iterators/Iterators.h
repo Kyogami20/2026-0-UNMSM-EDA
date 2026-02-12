@@ -1,7 +1,7 @@
 #ifndef ITERATORS_H_
 #define ITERATORS_H_
 
-#include "../containers/GeneralIterator.h"
+#include "GeneralIterator.h"
 #include "../general/types.h"
 #include "general/types.h"
 
