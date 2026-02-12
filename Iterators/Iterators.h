@@ -50,7 +50,7 @@ class ArrayBackwardIterator :  public ArrayIterator<Container>
     ArrayBackwardIterator(Container *pContainer, Size pos=0) : Parent(pContainer, pos){}
 
     ArrayBackwardIterator<Container> &operator++(){
-        if( Parent::m_pos > -1 )
+        if( Parent::m_pos > 0 )
             --Parent::m_pos;
         return *this;
     }

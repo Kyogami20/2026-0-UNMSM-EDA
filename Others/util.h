@@ -1,8 +1,8 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-#include "general/types.h"
-#include "foreach.h"
+#include "../general/types.h"
+#include "../general/foreach.h"
 
 template <typename T>
 void intercambiar(T &a, T &b){

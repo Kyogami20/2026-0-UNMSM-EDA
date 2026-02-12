@@ -6,7 +6,7 @@
 #include <stddef.h>
 
 #include "../algorithms/sorting.h"
-#include "GeneralIterator.h"
+#include "../Iterators/GeneralIterator.h"
 #include "../Iterators/Iterators.h"
 
 using namespace std;
@@ -93,7 +93,7 @@ class CArray {
     friend ostream &operator<<(ostream &os, CArray<Traits> &container){
         os << "CArray: size = " << container.getSize() << endl;
         os << "[";
-        for (auto i = 0; i < container.getSize(); ++i)
+        for (size_t i = 0; i < container.getSize(); ++i)
           os << "(" << container.m_data[i].GetValue() << ":" << container.m_data[i].GetRef() << "),";
         os << "]" << endl;
         return os;
@@ -132,7 +132,7 @@ template <typename Traits>
 void CArray<Traits>::resize(Size delta) {
     Size new_capacity = m_capacity + delta;
     Node *new_data = new Node[new_capacity];
-    for (auto i = 0; i < m_capacity; ++i)
+    for (size_t i = 0; i < m_capacity; ++i)
       new_data[i] = m_data[i];
     delete[] m_data;
     m_data = new_data;
