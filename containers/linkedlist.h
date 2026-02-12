@@ -130,7 +130,7 @@ class CLinkedList {
         forward_iterator end()
         { return forward_iterator(this, nullptr); }
 
-        void push_back(value_type &val, ref_type ref);
+        virtual void push_back(value_type &val, ref_type ref);
         void Insert(const value_type &val, ref_type ref);
         size_t getSize(){ return m_nElements;  };
 
@@ -184,9 +184,8 @@ typename Traits::value_type &CLinkedList<Traits>::operator[](Size index){
     if( index >= m_nElements ) throw out_of_range("Fuera del rango de la lista");
     NodeLinkedList *pCurrent = m_pRoot;
 
-    for (Size i = 0; i < index; ++i) {
-        pCurrent = pCurrent->GetNext();
-    }
+    for (Size i = 0; i < index; ++i) pCurrent = pCurrent->GetNext();
+
     return pCurrent->GetValueRef();
 }
 
