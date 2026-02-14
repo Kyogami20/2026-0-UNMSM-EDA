@@ -85,8 +85,29 @@ class LinkedListForwardIterator : public LinkedListIterator<Container>{
     public:
     LinkedListForwardIterator(Container *pContainer, NodeLinkedList *data) : Parent(pContainer, data){}
 
-    Parent &operator++(){
-        if( Parent::m_data != nullptr ) Parent::m_data = Parent::m_data->GetNext();
+    LinkedListForwardIterator<Container> &operator++(){
+        if( this->m_data != nullptr ) this->m_data = this->m_data->GetNext();
+        return *this;
+    }
+};
+
+//ITERATORS FOR DOUBLE LINKED LIST
+template <typename Container>
+class DoubleLinkedListBidirectionalIterator : public LinkedListIterator<Container> {
+
+    public:
+    using Parent = LinkedListIterator<Container>;
+    using NodeDoubleLinkedList = typename Container::NodeDoubleLinkedList;
+
+    DoubleLinkedListBidirectionalIterator(Container* pcontainer, NodeDoubleLinkedList* data): Parent(pcontainer, data) {}
+    
+    DoubleLinkedListBidirectionalIterator<Container>& operator++(){
+        if (this->m_data != nullptr) this->m_data = this->m_data->GetNext();
+        return *this;
+    }
+
+    DoubleLinkedListBidirectionalIterator<Container>& operator--(){
+        if (this->m_data != nullptr) this->m_data = this->m_data->getPrev();
         return *this;
     }
 };

@@ -33,9 +33,9 @@ class NodeLinkedList{
     using  value_type  = typename Traits::value_type;
 
     private:
-    value_type m_data;
-    ref_type   m_ref;
-    NodeLinkedList *m_pNext = nullptr;
+        value_type m_data;
+        ref_type   m_ref;
+        NodeLinkedList *m_pNext = nullptr;
 
     public:
         NodeLinkedList(){}
@@ -66,22 +66,23 @@ class NodeLinkedList{
 
 
 template <typename Traits>
-class CLinkedList {
-    
-    using  value_type  = typename Traits::value_type;
-    using  forward_iterator  = LinkedListForwardIterator<CLinkedList<Traits>>;
-    friend forward_iterator;
-    using  NodeLinkedList = NodeLinkedList<Traits>;
-    using  Node = NodeLinkedList;
-    friend LinkedListIterator<CLinkedList<Traits>>; 
-    friend GeneralIterator<CLinkedList<Traits>>; 
+class CLinkedList { 
 
-    NodeLinkedList *m_pRoot;
-    NodeLinkedList *m_pLast;
+    NodeLinkedList<Traits> *m_pRoot;
+    NodeLinkedList<Traits> *m_pLast;
     size_t m_nElements;
     mutable mutex m_mutex;
     
     public:
+        using  value_type  = typename Traits::value_type;
+        using  forward_iterator  = LinkedListForwardIterator<CLinkedList<Traits>>;
+        using  NodeLinkedList = NodeLinkedList<Traits>;
+        using  Node = NodeLinkedList;
+
+        friend forward_iterator;
+        friend LinkedListIterator<CLinkedList<Traits>>; 
+        friend GeneralIterator<CLinkedList<Traits>>;
+        
         //Constructor por defecto
         CLinkedList(): m_pRoot(nullptr), m_pLast(nullptr), m_nElements(0){}
 
