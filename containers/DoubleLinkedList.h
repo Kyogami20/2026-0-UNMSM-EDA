@@ -90,10 +90,10 @@ class CDoubleLinkedList  {
         }
 
         //Iterators
-        forward_iterator begin()
-        { return forward_iterator(this, m_pRoot); }
-        forward_iterator end()
-        { return forward_iterator(this, nullptr); }
+        bidirectional_iterator begin()
+        { return bidirectional_iterator(this, m_pRoot); }
+        bidirectional_iterator end()
+        { return bidirectional_iterator(this, nullptr); }
 
 };
 
