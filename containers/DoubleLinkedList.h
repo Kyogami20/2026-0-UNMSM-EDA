@@ -76,7 +76,10 @@ class CDoubleLinkedList  {
 
             NodeDoubleLinkedList *pCurrent = another.m_pRoot;
             while(pCurrent) {
-                
+                value_type val = pCurrent->GetValue();
+                ref_type ref = pCurrent->GetRef();
+                push_back(val, ref);
+                pCurrent = pCurrent->GetNext();
             }
         }
 
@@ -87,6 +90,21 @@ class CDoubleLinkedList  {
             m_pRoot = exchange(another.m_pRoot, nullptr);
             m_pLast = exchange(another.m_pLast, nullptr);
             m_nElements = exchange(another.m_nElements, 0);
+        }
+
+        //Destructor seguro
+        virtual ~CDoubleLinkedList() {
+            lock_guard<mutex> lock(m_mutex);
+            
+            NodeDoubleLinkedList *pCurrent = m_pRoot;
+            while(pCurrent) {
+                NodeDoubleLinkedList *pNext = pCurrent->GetNext();
+                delete pCurrent;
+                pCurrent = pNext;
+            }
+            m_pRoot = nullptr;
+            m_pLast = nullptr;
+            m_nElements = 0;
         }
 
         //Iterators
@@ -108,6 +126,7 @@ class CDoubleLinkedList  {
         }
 
         friend ostream &operator<<(ostream &os, CDoubleLinkedList<Traits> &container);
+        friend istream &operator>>(istream &is, CDoubleLinkedList<Traits> &container);
         void push_back(const value_type &value, ref_type ref);
 };
 
@@ -126,6 +145,17 @@ ostream &operator<<(ostream &os, CDoubleLinkedList<Traits> &container){
     
     os << "]" << endl;
     return os;
+}
+
+template <typename Traits>
+istream &operator>>(istream &is, CDoubleLinkedList<Traits> &container){
+    lock_guard<mutex> lock(container.m_mutex);
+
+    typename CDoubleLinkedList<Traits>::value_type val;
+    ref_type ref;
+    if(is >> val >> ref) { container.push_back(val, ref); }
+    
+    return is;
 }
 
 template <typename Traits>
