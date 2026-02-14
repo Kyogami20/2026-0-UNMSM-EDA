@@ -19,14 +19,10 @@ struct ListTrait{
 };
 
 template <typename T>
-struct AscendingTrait : 
-    public ListTrait<T, std::greater<T> >{
-};
+struct AscendingTrait : public ListTrait<T, std::greater<T> >{};
 
 template <typename T>
-struct DescendingTrait : 
-    public ListTrait<T, std::less<T> >{
-};
+struct DescendingTrait : public ListTrait<T, std::less<T> >{};
 
 template <typename Traits>
 class NodeLinkedList{
@@ -131,7 +127,7 @@ class CLinkedList {
         forward_iterator end()
         { return forward_iterator(this, nullptr); }
 
-        virtual void push_back(value_type &val, ref_type ref);
+        virtual void push_back(const value_type &val, ref_type ref);
         void Insert(const value_type &val, ref_type ref);
         size_t getSize(){ return m_nElements;  };
 
@@ -191,7 +187,7 @@ typename Traits::value_type &CLinkedList<Traits>::operator[](Size index){
 }
 
 template <typename Traits>
-void CLinkedList<Traits>::push_back(value_type &val, ref_type ref){
+void CLinkedList<Traits>::push_back(const value_type &val, ref_type ref){
     lock_guard<mutex> lock(m_mutex);
     NodeLinkedList *pNewNode = new NodeLinkedList(val, ref);
 
@@ -203,7 +199,9 @@ void CLinkedList<Traits>::push_back(value_type &val, ref_type ref){
 
 template <typename Traits>
 void CLinkedList<Traits>::InternalInsert(NodeLinkedList *&rParent, const value_type &val, ref_type ref){
-    if( !rParent || rParent->GetValueRef() > val ){
+    typename Traits::Func comparator;
+
+    if( !rParent || comparator(rParent->GetValueRef(), val) ){
         NodeLinkedList *pNew = new NodeLinkedList(val, ref);
         pNew->GetNextRef() = rParent;
         rParent = pNew;

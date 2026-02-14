@@ -81,7 +81,7 @@ class CDoubleLinkedList  {
         }
 
         //Move COnstructor
-        CDoubleLinkedList(CDoubleLinkedList &&another) noexcept: {
+        CDoubleLinkedList(CDoubleLinkedList &&another) noexcept {
             lock_guard<mutex> lock(another.m_mutex);
             
             m_pRoot = exchange(another.m_pRoot, nullptr);
@@ -93,8 +93,54 @@ class CDoubleLinkedList  {
         bidirectional_iterator begin()
         { return bidirectional_iterator(this, m_pRoot); }
         bidirectional_iterator end()
-        { return bidirectional_iterator(this, nullptr); }
+        { return bidirectional_iterator(this, m_pLast); }
 
+        //Foreach
+        template <typename ObjFunc, typename ...Args>
+        void Foreach(ObjFunc of, Args... args){
+            ::Foreach(*this, of, args...);
+        }
+
+        //FirstThat
+        template <typename ObjFunc, typename ...Args>
+        auto FirstThat(ObjFunc of, Args... args){
+            return ::FirstThat(*this, of, args...);
+        }
+
+        friend ostream &operator<<(ostream &os, CDoubleLinkedList<Traits> &container);
+        void push_back(const value_type &value, ref_type ref);
 };
+
+template <typename Traits>
+ostream &operator<<(ostream &os, CDoubleLinkedList<Traits> &container){
+    lock_guard<mutex> lock(container.m_mutex);
+    os << "CLinkedList: size = " << container.getSize() << endl;
+    os << "[";
+    
+    NodeDoubleLinkedList<Traits> *pCurrent = container.m_pRoot;
+    while( pCurrent ){
+        os << "(" << pCurrent->GetValue() << ", " << pCurrent->GetRef() << ")";
+        pCurrent = pCurrent->GetNext();
+        if( pCurrent ) os << ", ";
+    }
+    
+    os << "]" << endl;
+    return os;
+}
+
+template <typename Traits>
+void CDoubleLinkedList<Traits>::push_back(const value_type &value, ref_type ref){
+    lock_guard<mutex> lock(m_mutex);
+    NodeDoubleLinkedList* nuevoNodo = new NodeDoubleLinkedList(value, ref);
+
+    if (!m_pRoot) { 
+        m_pRoot = nuevoNodo; 
+    } else {
+        m_pLast->GetNextRef() = nuevoNodo;
+        nuevoNodo->getPrevRef() = m_pLast;
+    }
+    m_pLast = nuevoNodo;
+    ++m_nElements;
+}
 
 #endif // __DOUBLELINKEDLIST_H__
