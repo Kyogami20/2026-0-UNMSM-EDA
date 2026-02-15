@@ -14,7 +14,7 @@ using namespace std;
 
 template <typename Traits>
 class NodeDoubleLinkedList{
-    using value_type  = typename Traits::value_type;
+    using value_type  = Traits;
 
     private:
         value_type m_data;
@@ -61,9 +61,8 @@ class CDoubleLinkedList  {
     mutable mutex m_mutex;
 
     public:
-        using  value_type  = typename Traits::value_type;
+        using  value_type  = Traits;
         using Node = NodeDoubleLinkedList<Traits>;
-        using NodeDoubleLinkedList = NodeDoubleLinkedList<Traits>;
         using bidirectional_iterator = DoubleLinkedListBidirectionalIterator<CDoubleLinkedList<Traits>>;
 
         //Constructor por defecto
@@ -74,7 +73,7 @@ class CDoubleLinkedList  {
             m_pRoot(nullptr), m_pLast(nullptr), m_nElements(0) {
             lock_guard<mutex> lock(another.m_mutex);
 
-            NodeDoubleLinkedList *pCurrent = another.m_pRoot;
+            Node *pCurrent = another.m_pRoot;
             while(pCurrent) {
                 value_type val = pCurrent->GetValue();
                 ref_type ref = pCurrent->GetRef();
@@ -96,9 +95,9 @@ class CDoubleLinkedList  {
         virtual ~CDoubleLinkedList() {
             lock_guard<mutex> lock(m_mutex);
             
-            NodeDoubleLinkedList *pCurrent = m_pRoot;
+            Node *pCurrent = m_pRoot;
             while(pCurrent) {
-                NodeDoubleLinkedList *pNext = pCurrent->GetNext();
+                Node *pNext = pCurrent->GetNext();
                 delete pCurrent;
                 pCurrent = pNext;
             }
@@ -111,7 +110,7 @@ class CDoubleLinkedList  {
         bidirectional_iterator begin()
         { return bidirectional_iterator(this, m_pRoot); }
         bidirectional_iterator end()
-        { return bidirectional_iterator(this, m_pLast); }
+        { return bidirectional_iterator(this, nullptr); }
 
         //Foreach
         template <typename ObjFunc, typename ...Args>
@@ -125,18 +124,22 @@ class CDoubleLinkedList  {
             return ::FirstThat(*this, of, args...);
         }
 
-        friend ostream &operator<<(ostream &os, CDoubleLinkedList<Traits> &container);
-        friend istream &operator>>(istream &is, CDoubleLinkedList<Traits> &container);
+        template <typename T>
+        friend ostream &operator<<(ostream &os, CDoubleLinkedList<T> &container);
+        template <typename T>
+        friend istream &operator>>(istream &is, CDoubleLinkedList<T> &container);
         void push_back(const value_type &value, ref_type ref);
+        size_t getSize(){ return m_nElements;  };
+        Node* getLastNode() const { return m_pLast; }
 };
 
 template <typename Traits>
 ostream &operator<<(ostream &os, CDoubleLinkedList<Traits> &container){
     lock_guard<mutex> lock(container.m_mutex);
-    os << "CLinkedList: size = " << container.getSize() << endl;
+    os << "CDoubleLinkedList: size = " << container.getSize() << endl;
     os << "[";
     
-    NodeDoubleLinkedList<Traits> *pCurrent = container.m_pRoot;
+    auto *pCurrent = container.m_pRoot;
     while( pCurrent ){
         os << "(" << pCurrent->GetValue() << ", " << pCurrent->GetRef() << ")";
         pCurrent = pCurrent->GetNext();
@@ -161,7 +164,7 @@ istream &operator>>(istream &is, CDoubleLinkedList<Traits> &container){
 template <typename Traits>
 void CDoubleLinkedList<Traits>::push_back(const value_type &value, ref_type ref){
     lock_guard<mutex> lock(m_mutex);
-    NodeDoubleLinkedList* nuevoNodo = new NodeDoubleLinkedList(value, ref);
+    Node* nuevoNodo = new Node(value, ref);
 
     if (!m_pRoot) { 
         m_pRoot = nuevoNodo; 

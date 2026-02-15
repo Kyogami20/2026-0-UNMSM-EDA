@@ -72,8 +72,7 @@ class CLinkedList {
     public:
         using  value_type  = typename Traits::value_type;
         using  forward_iterator  = LinkedListForwardIterator<CLinkedList<Traits>>;
-        using  NodeLinkedList = NodeLinkedList<Traits>;
-        using  Node = NodeLinkedList;
+        using  Node = NodeLinkedList<Traits>;
 
         friend forward_iterator;
         friend LinkedListIterator<CLinkedList<Traits>>; 
@@ -87,7 +86,7 @@ class CLinkedList {
             m_pRoot(nullptr), m_pLast(nullptr), m_nElements(0) {
             lock_guard<mutex> lock(another.m_mutex);
             
-            NodeLinkedList *pCurrent = another.m_pRoot;
+            Node *pCurrent = another.m_pRoot;
             while(pCurrent) {
                 value_type val = pCurrent->GetValue();
                 ref_type ref = pCurrent->GetRef();
@@ -110,9 +109,9 @@ class CLinkedList {
         virtual ~CLinkedList() {
             lock_guard<mutex> lock(m_mutex);
             
-            NodeLinkedList *pCurrent = m_pRoot;
+            Node *pCurrent = m_pRoot;
             while(pCurrent) {
-                NodeLinkedList *pNext = pCurrent->GetNext();
+                Node *pNext = pCurrent->GetNext();
                 delete pCurrent;
                 pCurrent = pNext;
             }
@@ -136,7 +135,7 @@ class CLinkedList {
             os << "CLinkedList: size = " << container.getSize() << endl;
             os << "[";
             
-            NodeLinkedList *pCurrent = container.m_pRoot;
+            Node *pCurrent = container.m_pRoot;
             while( pCurrent ){
                 os << "(" << pCurrent->GetValue() << ", " << pCurrent->GetRef() << ")";
                 pCurrent = pCurrent->GetNext();
@@ -171,7 +170,7 @@ class CLinkedList {
         }
 
     private:
-        void InternalInsert(NodeLinkedList *&rParent, const value_type &val, ref_type ref);
+        void InternalInsert(Node *&rParent, const value_type &val, ref_type ref);
 };
 
 template <typename Traits>
@@ -179,7 +178,7 @@ typename Traits::value_type &CLinkedList<Traits>::operator[](Size index){
     lock_guard<mutex> lock(m_mutex);
 
     if( index >= m_nElements ) throw out_of_range("Fuera del rango de la lista");
-    NodeLinkedList *pCurrent = m_pRoot;
+    Node *pCurrent = m_pRoot;
 
     for (Size i = 0; i < index; ++i) pCurrent = pCurrent->GetNext();
 
@@ -189,7 +188,7 @@ typename Traits::value_type &CLinkedList<Traits>::operator[](Size index){
 template <typename Traits>
 void CLinkedList<Traits>::push_back(const value_type &val, ref_type ref){
     lock_guard<mutex> lock(m_mutex);
-    NodeLinkedList *pNewNode = new NodeLinkedList(val, ref);
+    Node *pNewNode = new Node(val, ref);
 
     if( !m_pRoot ){ m_pRoot = pNewNode;
     } else { m_pLast->GetNextRef() = pNewNode; }
@@ -198,11 +197,11 @@ void CLinkedList<Traits>::push_back(const value_type &val, ref_type ref){
 }
 
 template <typename Traits>
-void CLinkedList<Traits>::InternalInsert(NodeLinkedList *&rParent, const value_type &val, ref_type ref){
+void CLinkedList<Traits>::InternalInsert(Node *&rParent, const value_type &val, ref_type ref){
     typename Traits::Func comparator;
 
     if( !rParent || comparator(rParent->GetValueRef(), val) ){
-        NodeLinkedList *pNew = new NodeLinkedList(val, ref);
+        Node *pNew = new Node(val, ref);
         pNew->GetNextRef() = rParent;
         rParent = pNew;
         ++m_nElements;
