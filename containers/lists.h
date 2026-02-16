@@ -6,6 +6,7 @@
 #include "DoubleLinkedList.h"
 
 void DemoLists();
+void DemoCircularLinkedList();
 void DemoDoubleLinkedList();
 
 #endif // __LISTS_H__

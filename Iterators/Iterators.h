@@ -70,7 +70,7 @@ class LinkedListIterator : public GeneralIterator<Container> {
     LinkedListIterator(Container *pContainer, Node *data) : Parent(pContainer, data){}
 
     bool operator!=(const LinkedListIterator<Container> &another) {
-        return this->m_pContainer != another.m_pContainer || Parent::m_data != another.m_data;
+        return this->m_pContainer != another.m_pContainer || this->m_data != another.m_data;
     }
 
     bool operator==(const LinkedListIterator<Container> &another) {

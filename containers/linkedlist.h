@@ -64,10 +64,11 @@ class NodeLinkedList{
 template <typename Traits>
 class CLinkedList { 
 
-    NodeLinkedList<Traits> *m_pRoot;
-    NodeLinkedList<Traits> *m_pLast;
-    size_t m_nElements;
-    mutable mutex m_mutex;
+    protected:
+        NodeLinkedList<Traits> *m_pRoot;
+        NodeLinkedList<Traits> *m_pLast;
+        size_t m_nElements;
+        mutable mutex m_mutex;
     
     public:
         using  value_type  = typename Traits::value_type;
@@ -96,8 +97,7 @@ class CLinkedList {
         }
 
         //Constructor de movimiento
-        CLinkedList(CLinkedList<Traits> &&another) noexcept: 
-            m_pRoot(nullptr), m_pLast(nullptr), m_nElements(0) {
+        CLinkedList(CLinkedList<Traits> &&another) noexcept {
             lock_guard<mutex> lock(another.m_mutex);
             
             m_pRoot = exchange(another.m_pRoot, nullptr);

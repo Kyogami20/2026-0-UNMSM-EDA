@@ -16,7 +16,7 @@ template <typename Traits>
 class NodeDoubleLinkedList{
     using value_type  = Traits;
 
-    private:
+    protected:
         value_type m_data;
         ref_type   m_ref;
         NodeDoubleLinkedList *m_pNext = nullptr;
@@ -128,7 +128,7 @@ class CDoubleLinkedList  {
         friend ostream &operator<<(ostream &os, CDoubleLinkedList<T> &container);
         template <typename T>
         friend istream &operator>>(istream &is, CDoubleLinkedList<T> &container);
-        void push_back(const value_type &value, ref_type ref);
+        virtual void push_back(const value_type &value, ref_type ref);
         size_t getSize(){ return m_nElements;  };
         Node* getLastNode() const { return m_pLast; }
 };
