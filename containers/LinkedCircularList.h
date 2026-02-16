@@ -12,8 +12,13 @@ class CLinkedCircularList : public CLinkedList<Traits> {
 
     public:
         using Parent = CLinkedList<Traits>;
-        using value_type = typename Traits::value_type;
+        using value_type =  typename Traits::value_type;
         using Node = typename Parent::Node;
+        using forward_iterator = CircularLinkedLisForwardtIterator<CLinkedCircularList<Traits>>;
+
+        friend CircularLinkedLisForwardtIterator<CLinkedCircularList<Traits>>;
+        friend LinkedListIterator<CLinkedCircularList<Traits>>;
+        friend GeneralIterator<CLinkedCircularList<Traits>>;
 
         //Constructor por defecto
         CLinkedCircularList() : Parent() {}
@@ -44,10 +49,24 @@ class CLinkedCircularList : public CLinkedList<Traits> {
                 this->m_pLast->GetNextRef() = nullptr;
         }
 
+        //Iterators
+        forward_iterator begin(){ return forward_iterator(this, this->m_pRoot, this->m_nElements); }
+        forward_iterator end() { return forward_iterator(this, this->m_pRoot, 0); }
+
         void push_back(const value_type &val, ref_type ref) override;
 
         template <typename T>
         friend ostream& operator<<(ostream &os, CLinkedCircularList<T> &container);
+
+        template <typename ObjFunc, typename ...Args>
+        forward_iterator FirstThat(ObjFunc of, Args... args) {
+            return ::FirstThat(this->begin(), this->end(), of, args...);
+        }
+
+        template <typename ObjFunc, typename ...Args>
+        void Foreach(ObjFunc of, Args... args) {
+            ::Foreach(this->begin(), this->end(), of, args...);
+        }
 };
 
 template <typename Traits>

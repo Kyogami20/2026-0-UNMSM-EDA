@@ -32,7 +32,7 @@ class DoublyCircularLinkedList : public CDoubleLinkedList<Traits> {
             }
         }
 
-        //Constructor de movimiento
+        
         DoublyCircularLinkedList(DoublyCircularLinkedList &&another) noexcept : Parent() {
             lock_guard<mutex> lock(another.m_mutex);
 

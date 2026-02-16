@@ -16,13 +16,13 @@ class ArrayIterator :  public GeneralIterator<Container> {
     Size m_pos;
 
     public:
-    ArrayIterator(Container *pContainer, Size pos=0) : Parent(pContainer, pContainer->m_data), m_pos(pos){}
+        ArrayIterator(Container *pContainer, Size pos=0) : Parent(pContainer, pContainer->m_data), m_pos(pos){}
 
-    bool operator!=(const ArrayIterator<Container> &another) {
-        return this->m_pContainer != another.m_pContainer || m_pos != another.m_pos;
-    }
+        bool operator!=(const ArrayIterator<Container> &another) {
+            return this->m_pContainer != another.m_pContainer || m_pos != another.m_pos;
+        }
 
-    value_type &operator*() override { return Parent::m_data[m_pos].GetValueRef(); }
+        value_type &operator*() override { return Parent::m_data[m_pos].GetValueRef(); }
 };
 
 
@@ -34,26 +34,26 @@ class ArrayForwardIterator : public ArrayIterator<Container>{
     public:
     ArrayForwardIterator(Container *pContainer, Size pos=0) : Parent(pContainer, pos){}
 
-    Parent &operator++(){
-        if( Parent::m_pos < Parent::m_pContainer->getSize() )
-            ++Parent::m_pos;
+    ArrayForwardIterator<Container> &operator++(){
+        if( this->m_pos < this->m_pContainer->getSize() )
+            ++this->m_pos;
         return *this;
     }
 };
 
 template <typename Container>
-class ArrayBackwardIterator :  public ArrayIterator<Container>
-{ 
-  using Parent = ArrayIterator<Container>;
+class ArrayBackwardIterator :  public ArrayIterator<Container>{
 
-  public:
-    ArrayBackwardIterator(Container *pContainer, Size pos=0) : Parent(pContainer, pos){}
+    using Parent = ArrayIterator<Container>;
 
-    ArrayBackwardIterator<Container> &operator++(){
-        if( Parent::m_pos > 0 )
-            --Parent::m_pos;
-        return *this;
-    }
+    public:
+        ArrayBackwardIterator(Container *pContainer, Size pos=0) : Parent(pContainer, pos){}
+
+        ArrayBackwardIterator<Container> &operator++(){
+            if( this->m_pos > 0 )
+                --this->m_pos;
+            return *this;
+        }
 }; 
 
 //Iterators for CLinkedList
@@ -67,17 +67,17 @@ class LinkedListIterator : public GeneralIterator<Container> {
     using Node = typename Container::Node;
 
     public:
-    LinkedListIterator(Container *pContainer, Node *data) : Parent(pContainer, data){}
+        LinkedListIterator(Container *pContainer, Node *data) : Parent(pContainer, data){}
 
-    bool operator!=(const LinkedListIterator<Container> &another) {
-        return this->m_pContainer != another.m_pContainer || this->m_data != another.m_data;
-    }
+        bool operator!=(const LinkedListIterator<Container> &another) {
+            return this->m_pContainer != another.m_pContainer || this->m_data != another.m_data;
+        }
 
-    bool operator==(const LinkedListIterator<Container> &another) {
-        return !(*this != another);
-    }
+        bool operator==(const LinkedListIterator<Container> &another) {
+            return !(*this != another);
+        }
 
-    value_type &operator*() override { return Parent::m_data->GetValueRef(); }
+        value_type &operator*() override { return Parent::m_data->GetValueRef(); }
 };
 
 template <typename Container>
@@ -87,12 +87,42 @@ class LinkedListForwardIterator : public LinkedListIterator<Container>{
     using Node = typename Container::Node;
 
     public:
-    LinkedListForwardIterator(Container *pContainer, Node *data) : Parent(pContainer, data){}
+        LinkedListForwardIterator(Container *pContainer, Node *data) : Parent(pContainer, data){}
 
-    LinkedListForwardIterator<Container> &operator++(){
-        if( this->m_data != nullptr ) this->m_data = this->m_data->GetNext();
-        return *this;
-    }
+        LinkedListForwardIterator<Container> &operator++(){
+            if( this->m_data != nullptr ) this->m_data = this->m_data->GetNext();
+            return *this;
+        }
+};
+
+//ITERATOR FOR CIRCULAR LINKED LIST
+template <typename Container>
+class CircularLinkedLisForwardtIterator : public LinkedListIterator<Container> {
+    using Parent = LinkedListIterator<Container>;
+    using Node = typename Container::Node;
+
+    private:
+        size_t n_remaining;
+
+    public:
+        CircularLinkedLisForwardtIterator(Container *pContainer, Node *data, size_t faltantes):
+            Parent(pContainer, data), n_remaining(faltantes) {}
+
+        CircularLinkedLisForwardtIterator<Container> &operator++(){
+            if (n_remaining > 0){
+                this->m_data = this->m_data->GetNext();
+                --n_remaining;
+            }
+            return *this;
+        }
+
+        bool operator!=(const CircularLinkedLisForwardtIterator<Container> &another) const {
+            return n_remaining != another.n_remaining;
+        }
+
+        bool operator==(const CircularLinkedLisForwardtIterator<Container> &another) const {
+            return !(*this != another);
+        }
 };
 
 //ITERATORS FOR DOUBLE LINKED LIST
