@@ -6,49 +6,17 @@
 #include <utility>
 
 #include "../general/types.h"
+#include "../general/NodoLineal.h"
 
 using namespace std;
 
 template <typename Traits>
-class NodoStack {
-    
-    private:
-        using value_type = Traits;
-
-        NodoStack *m_pNext;
-        value_type m_data;
-        ref_type m_ref;
-
-    public:
-        NodoStack() {}
-        NodoStack(value_type value, ref_type ref): m_pNext(nullptr), m_data(value), m_ref(ref) {}
-
-        value_type  GetValue   () const { return m_data; }
-        value_type &GetValueRef() { return m_data; }
-
-        ref_type    GetRef     () const { return m_ref;   }
-        ref_type   &GetRefRef  () { return m_ref;   }
-
-        NodoStack   * GetNext     () const { return m_pNext;   }
-        NodoStack   *&GetNextRef  () { return m_pNext;   }
-
-        NodoStack &operator=(const NodoStack &another){
-            m_data = another.GetValue();
-            m_ref   = another.GetRef();
-            return *this;
-        }
-
-        bool operator==(const NodoStack &another) const { return m_data == another.GetValue(); }
-        bool operator!=(const NodoStack &another) const { return !(this->operator==(another)); }
-};
-
-
-template <typename Traits>
 class Stack {
     using value_type = Traits;
+    using NodoStack = NodoLineal<Traits>;
 
     private:
-        NodoStack<Traits> *m_pTop;
+        NodoStack *m_pTop;
         size_t m_nElements;
         mutable mutex m_mutex;  
 
@@ -63,13 +31,13 @@ class Stack {
             lock_guard<mutex> lock(another.m_mutex);
 
             Stack<Traits> temp;
-            NodoStack<Traits> *pCurrent = another.m_pTop;
+            NodoStack *pCurrent = another.m_pTop;
             while (pCurrent){
                 temp.internalPush(pCurrent->GetValue(), pCurrent->GetRef());
                 pCurrent = pCurrent->GetNext();
             }
 
-            NodoStack<Traits> *pTemp = temp.m_pTop;
+            NodoStack *pTemp = temp.m_pTop;
             while (pTemp) {
                 internalPush(pTemp->GetValue(), pTemp->GetRef());
                 pTemp = pTemp->GetNext();
@@ -84,12 +52,10 @@ class Stack {
             m_nElements = exchange(another.m_nElements, 0);
         }
 
-        NodoStack<Traits> *GetTop() const { return m_pTop; }
-        NodoStack<Traits> *&GetTop() { return m_pTop; }
         size_t getSize() { return m_nElements; }
 
         void push(const value_type &value, ref_type ref);
-        NodoStack<Traits> pop(); 
+        NodoStack pop(); 
 
         template <typename T>
         friend ostream &operator<<(ostream &os, Stack<T> &container);
@@ -101,17 +67,12 @@ class Stack {
 template <typename Traits>
 void Stack<Traits>::push(const value_type &value, ref_type ref){
     lock_guard<mutex> lock(m_mutex);
-
-    NodoStack<Traits> *nNodo = new NodoStack<Traits>(value, ref);
-
-    nNodo->GetNextRef() = m_pTop;
-    m_pTop = nNodo;
-    ++m_nElements;
+    internalPush(value, ref);
 }
 
 template<typename Traits>
 void Stack<Traits>::internalPush(const value_type &value, ref_type ref){
-    NodoStack<Traits> *nNodo = new NodoStack<Traits>(value, ref);
+    NodoStack *nNodo = new NodoStack(value, ref);
 
     nNodo->GetNextRef() = m_pTop;
     m_pTop = nNodo;
@@ -119,13 +80,13 @@ void Stack<Traits>::internalPush(const value_type &value, ref_type ref){
 }
 
 template <typename Traits>
-NodoStack<Traits> Stack<Traits>::pop(){
+NodoLineal<Traits> Stack<Traits>::pop(){
     lock_guard<mutex> lock(m_mutex);
 
     if (!m_pTop) throw out_of_range("Stack Vacio");
 
-    NodoStack<Traits> *temp = m_pTop;
-    NodoStack<Traits> topValue = *temp;
+    NodoStack *temp = m_pTop;
+    NodoStack topValue = *temp;
 
     m_pTop = m_pTop->GetNext();
     delete temp;
@@ -141,7 +102,7 @@ ostream &operator<<(ostream &os, Stack<Traits> &container){
     os << "Stack: size = " << container.getSize() << endl;
     os << "[";
     
-    NodoStack<Traits> *pCurrent = container.GetTop();
+    NodoLineal<Traits> *pCurrent = container.m_pTop;
     while( pCurrent ){
         os << "(" << pCurrent->GetValue() << ", " << pCurrent->GetRef() << ")";
         pCurrent = pCurrent->GetNext();
@@ -163,7 +124,5 @@ istream &operator>>(istream &is, Stack<Traits> &container){
     
     return is;
 }
-
-
 
 #endif //STACK_H_
